@@ -1,6 +1,7 @@
 gulp          = require 'gulp'
 gutil         = require 'gulp-util'
 watch         = require 'gulp-watch'
+sourcemaps    = require 'gulp-sourcemaps'
 
 jade          = require 'gulp-jade'
 
@@ -8,7 +9,7 @@ coffee        = require 'gulp-coffee'
 concat        = require 'gulp-concat'
 uglify        = require 'gulp-uglify'
 
-less          = require 'gulp-less'
+sass          = require 'gulp-sass'
 minifyCss     = require 'gulp-minify-css'
 rename        = require 'gulp-rename'
 
@@ -38,8 +39,8 @@ paths = {
     ]
   scripts_dst: './www/public/js/'
   styles: [
-    './dev/less/*.less'
-    './dev/less/**/*.less'
+    './dev/sass/*.scss'
+    './dev/sass/**/*.scss'
   ]
   styles_dst: './www/public/css/'
   views: [
@@ -81,17 +82,19 @@ gulp.task 'jade', ->
       .pipe watch paths.views
    return
 
-gulp.task 'less', ->
+gulp.task 'sass', ->
   watch paths.styles, ->
-    console.log "Compilando less"
+    console.log "Compilando sass"
     gulp.src paths.styles
-      .pipe less()
-        .on 'error', gutil.log
+      .pipe sourcemaps.init()
+        .pipe sass()
+          .on 'error', gutil.log
+        # .pipe minifyCss()
+        # .pipe rename extname: '.min.css'
+        # .pipe gulp.dest paths.styles_dst
+        # .pipe watch paths.styles
+      .pipe sourcemaps.write('.')
       .pipe gulp.dest paths.styles_dst
-      .pipe minifyCss()
-      .pipe rename extname: '.min.css'
-      .pipe gulp.dest paths.styles_dst
-      .pipe watch paths.styles
    return
 
 gulp.task 'coffee', ->
@@ -118,7 +121,7 @@ module.exports =
     'copy-images'
     'copy-lib'
     'jade'
-    'less'
+    'sass'
     'coffee'
     'express'
   ]
