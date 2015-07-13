@@ -89,12 +89,16 @@ gulp.task 'sass', ->
       .pipe sourcemaps.init()
         .pipe sass()
           .on 'error', gutil.log
-        # .pipe minifyCss()
-        # .pipe rename extname: '.min.css'
-        # .pipe gulp.dest paths.styles_dst
-        # .pipe watch paths.styles
       .pipe sourcemaps.write('.')
       .pipe gulp.dest paths.styles_dst
+
+      # .pipe sass(paths.styles)
+      #   .on 'error', gutil.log
+      # .pipe minifyCss()
+      # .pipe rename extname: '.min.css'
+      # .pipe gulp.dest paths.styles_dst
+
+      .pipe watch paths.styles
    return
 
 gulp.task 'coffee', ->
